@@ -1,12 +1,7 @@
 from flask_restful import Resource, reqparse
-from models import HouseholdModel, MemberModel
+from models import Household, Member, GrantQuery, HOUSEHOLD_CHOICES, OCCUPATION_CHOICES, MARITAL_STATUS_CHOICES, GENDER_CHOICES
 
-HOUSEHOLD_CHOICES = ("Landed","Condominium","HDB")
-OCCUPATION_CHOICES = ("Employed","Unemployed","Student")
-MARITAL_STATUS_CHOICES = ("Married","Single","Divorced","Widowed")
-GENDER_CHOICES = ("Male","Female","Others")
-
-class Household(Resource):
+class HouseholdController(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument("type",
                         required=True,
@@ -16,14 +11,14 @@ class Household(Resource):
 
     def get(self, name):
 
-        household = HouseholdModel.find_by_name(name)
+        household = Household.find_by_name(name)
         if household:
             return {"data":household.json(), "message": None}, 200
         return {"data":None, "message": "Household not found."}, 404
 
     def post(self, name):
-        data = Household.parser.parse_args()
-        household = HouseholdModel(name, data["type"])
+        data = HouseholdController.parser.parse_args()
+        household = Household(name, data["type"])
         try:
             household.save_to_db()
         except:
@@ -31,7 +26,7 @@ class Household(Resource):
         return {"data":household.json(), "message": None}, 201
 
     def delete(self, name):
-        household = HouseholdModel.find_by_name(name)
+        household = Household.find_by_name(name)
         if household:
             household.delete_from_db()
             return {"data":None, "message": "Household deleted."}, 200
@@ -40,15 +35,15 @@ class Household(Resource):
 
 class HouseholdList(Resource):
     def get(self):
-        return {"data": list(map(lambda x: x.json(), HouseholdModel.query.all())), "message": None}, 200
+        return {"data": list(map(lambda x: x.json(), Household.query.all())), "message": None}, 200
 
 
-class Member(Resource):
+class MemberController(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument("gender",
                         required=True,
                         choices = GENDER_CHOICES,
-                        help="This member must have a gender - Male, Female or Others."
+                        help="This member must have a gender - M or F."
                         )
     parser.add_argument("marital_status",
                         required=True,
@@ -69,9 +64,9 @@ class Member(Resource):
                         required=True,
                         help="This field cannot be left blank!"
                         )
-    parser.add_argument("DOB",
+    parser.add_argument("dob",
                         required=True,
-                        help="This field cannot be left blank! Enter DOB in 'DD/MM/YYYY' form."
+                        help="This field cannot be left blank! Enter date of birth in 'YYYY-MM-DD' form."
                         )
     parser.add_argument("household_id",
                         type=int,
@@ -80,21 +75,21 @@ class Member(Resource):
                         )
 
     def get(self, name):
-        member = MemberModel.find_by_name(name)
+        member = Member.find_by_name(name)
         if member:
             return {"data":member.json(), "message": None}, 200
         return {"data":None, "message": "Member not found."}, 404
 
     def post(self, name):
-        # if MemberModel.find_by_name(name):
+        # if Member.find_by_name(name):
         #     return {"message": "An member with name "{}" already exists.".format(name)}, 400
 
-        data = Member.parser.parse_args()
+        data = MemberController.parser.parse_args()
 
-        if HouseholdModel.find_by_id(data["household_id"]) is None:
+        if Household.find_by_ids([data["household_id"]])[0] is None:
             return {"data":None, "message": "Household not found."}, 404
 
-        member = MemberModel(name, data["gender"], data["marital_status"], data["spouse"], data["occupation_type"], data["annual_income"], data["DOB"], data["household_id"])
+        member = Member(name, data["gender"], data["marital_status"], data["spouse"], data["occupation_type"], data["annual_income"], data["dob"], data["household_id"])
 
         try:
             member.save_to_db()
@@ -105,19 +100,19 @@ class Member(Resource):
 
 
     def delete(self, name):
-        member = MemberModel.find_by_name(name)
+        member = Member.find_by_name(name)
         if member:
             member.delete_from_db()
             return {"data":None, "message": "Member deleted."}, 200
         return {"data":None, "message": "Member not found."}, 404
 
     def put(self, name):
-        data = Member.parser.parse_args()
+        data = MemberController.parser.parse_args()
 
-        if HouseholdModel.find_by_id(data["household_id"]) is None:
+        if Household.find_by_ids([data["household_id"]])[0] is None:
             return {"data":None, "message": "Household not found."}, 404
 
-        member = MemberModel.find_by_name(name)
+        member = Member.find_by_name(name)
 
         if member:
             member.gender = data["gender"]
@@ -125,17 +120,23 @@ class Member(Resource):
             member.spouse = data["spouse"]
             member.occupation_type = data["occupation_type"]
             member.annual_income = data["annual_income"]
-            member.DOB = data["DOB"]
+            member.dob = data["dob"]
             member.household_id = data["household_id"]
             member.save_to_db()
             return {"data":member.json(), "message": "Member has been updated."}, 204
 
-        else:
-            member = MemberModel(name, data["gender"], data["marital_status"], data["spouse"], data["occupation_type"], data["annual_income"], data["DOB"], data["household_id"])
-            member.save_to_db()
-            return {"data":member.json(), "message": "Member has been created."}, 201
+        member = Member(name, data["gender"], data["marital_status"], data["spouse"], data["occupation_type"], data["annual_income"], data["dob"], data["household_id"])
+        member.save_to_db()
+        return {"data":member.json(), "message": "Member has been created."}, 201
 
 
 class MemberList(Resource):
     def get(self):
-        return {"data": list(map(lambda x: x.json(), MemberModel.query.all())), "message": None}, 200
+        return {"data": list(map(lambda x: x.json(), Member.query.all())), "message": None}, 200
+
+class GrantSearch(Resource):
+    def get(self, grant):
+        result = GrantQuery.eligible_households(grant)
+        households = Household.find_by_ids(result)
+        return {"data":list(map(lambda x: x.json(), households)), "message": None}, 200
+        # return result
