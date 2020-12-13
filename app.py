@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_restful import Api
-
-from resources import HouseholdList, HouseholdController, MemberList, MemberController, GrantSearch
+from resources import HouseholdListController, HouseholdController, MemberListController, MemberController, GrantSearch
 from db import db
 
 app = Flask(__name__)
@@ -15,11 +14,11 @@ api = Api(app)
 def create_tables():
     db.create_all()
 
-api.add_resource(HouseholdList, '/households')
-api.add_resource(HouseholdController, '/household/<string:name>')
-api.add_resource(MemberList, '/members')
-api.add_resource(MemberController, '/member/<string:name>')
-api.add_resource(GrantSearch, '/households/grant/<string:grant>')
+api.add_resource(HouseholdListController, '/households')
+api.add_resource(HouseholdController, '/household/<string:id>')
+api.add_resource(MemberListController, '/members')
+api.add_resource(MemberController, '/member/<string:id>')
+api.add_resource(GrantSearch, '/households/grant')
 
 if __name__ == '__main__':
     db.init_app(app)

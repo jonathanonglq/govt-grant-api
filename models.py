@@ -1,10 +1,11 @@
 from db import db
-from queries import YOLO_GRANT_QUERY, BABY_GRANT_QUERY, ELDER_BONUS_QUERY, STUDENT_BONUS_QUERY
+from queries import YOLO_GRANT_QUERY, BABY_GRANT_QUERY, ELDER_BONUS_QUERY, STUDENT_BONUS_QUERY, MANUAL_QUERY
 
 YOLO_GRANT = "YOLOGSTGrant"
 BABY_GRANT = "BabySunshineGrant"
 ELDER_BONUS = "ElderBonus"
 STUDENT_BONUS = "StudentEncouragementBonus"
+CUSTOM_GRANT = "CustomGrant"
 MAX_CHAR = 80
 
 HOUSEHOLD_CHOICES = ("Landed","Condominium","HDB")
@@ -77,6 +78,10 @@ class Member(db.Model):
     def find_by_name(cls, name):
         return cls.query.filter_by(name=name).first()
 
+    @classmethod
+    def find_by_ids(cls, ids):
+        return list(cls.query.filter_by(id=id).first() for id in ids)
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
@@ -88,19 +93,37 @@ class Member(db.Model):
 class GrantQuery():
 
     @staticmethod
-    def eligible_households(grant):
-        if grant == YOLO_GRANT:
+    def eligible_households(args):
+
+        if args["grant"] == YOLO_GRANT:
             result = db.engine.execute(YOLO_GRANT_QUERY)
             return [row[0] for row in result]
 
-        if grant == BABY_GRANT:
+        elif args["grant"] == BABY_GRANT:
             result = db.engine.execute(BABY_GRANT_QUERY)
             return [row[0] for row in result]
 
-        if grant == ELDER_BONUS:
+        elif args["grant"] == ELDER_BONUS:
             result = db.engine.execute(ELDER_BONUS_QUERY)
             return [row[0] for row in result]
 
-        if grant == STUDENT_BONUS:
+        elif args["grant"] == STUDENT_BONUS:
             result = db.engine.execute(STUDENT_BONUS_QUERY)
+            return [row[0] for row in result]
+
+        elif args["grant"] == CUSTOM_GRANT:
+            try:
+                housing_type = args["housing_type"]
+            except:
+                housing_type = "Landed','Condominium','HDB"
+            try:
+                max_total_income = args["max_total_income"]
+            except:
+                max_total_income = 1e20
+            try:
+                max_household_size = args["max_household_size"]
+            except:
+                max_household_size = 1e20
+
+            result = db.engine.execute(MANUAL_QUERY.format(housing_type = housing_type, max_total_income = max_total_income, max_household_size = max_household_size))
             return [row[0] for row in result]

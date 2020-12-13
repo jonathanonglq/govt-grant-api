@@ -15,7 +15,7 @@ YOLO_GRANT_QUERY = """
                             ) AS t1
                         LEFT JOIN households t2
                         ON t1.household_id = t2.id
-                        WHERE t2.type == 'HDB' AND t1.total_income < 100000
+                        WHERE t2.type == "HDB" AND t1.total_income < 100000
 
                         """
 
@@ -44,3 +44,18 @@ STUDENT_BONUS_QUERY = """
                         HAVING dob > '{}' AND total_income < 150000
 
                         """.format(benchmark_date(16))
+
+MANUAL_QUERY = """
+                    SELECT
+                        t1.household_id, t1.total_income, t1.household_size, t2.type
+                    FROM (
+                        SELECT
+                            household_id, SUM(annual_income) AS total_income, COUNT(*) AS household_size
+                        FROM members
+                        GROUP BY household_id
+                        ) AS t1
+                    LEFT JOIN households t2
+                    ON t1.household_id = t2.id
+                    WHERE t2.type IN ('{housing_type}') AND t1.total_income <= {max_total_income} AND t1.household_size <= {max_household_size}
+
+                """
