@@ -27,7 +27,7 @@ class HouseholdController(Resource):
             household.save_to_db()
             return {"data":household.json(), "message": "Household has been updated."}, 204
 
-        household = Household(data["name"], data["type"])
+        household = Household(**data)
         household.save_to_db()
         return {"data":household.json(), "message": "Household has been created."}, 201
 
@@ -44,11 +44,12 @@ class HouseholdListController(Resource):
                         help="This household must have a household type - HDB, Condominium or Landed."
                         )
     def get(self):
-        return {"data": list(map(lambda x: x.json(), Household.query.all())), "message": None}, 200
+        return {"data": [x.json() for x in Household.query.all()], "message": None}, 200
+
 
     def post(self):
         data = HouseholdListController.parser.parse_args()
-        household = Household(data["name"], data["type"])
+        household = Household(**data)
         try:
             household.save_to_db()
         except:
@@ -83,7 +84,7 @@ class MemberController(Resource):
             member.name = data["name"]
             member.gender = data["gender"]
             member.marital_status = data["marital_status"]
-            member.spouse = data["spouse"]
+            member.spouse_id = data["spouse_id"]
             member.occupation_type = data["occupation_type"]
             member.annual_income = data["annual_income"]
             member.dob = data["dob"]
@@ -91,7 +92,7 @@ class MemberController(Resource):
             member.save_to_db()
             return {"data":member.json(), "message": "Member has been updated."}, 204
 
-        member = Member(data["name"], data["gender"], data["marital_status"], data["spouse"], data["occupation_type"], data["annual_income"], data["dob"], data["household_id"])
+        member = Member(**data)
         member.save_to_db()
         return {"data":member.json(), "message": "Member has been created."}, 201
 
@@ -112,9 +113,9 @@ class MemberListController(Resource):
                         choices = MARITAL_STATUS_CHOICES,
                         help="This member must have a marital status - Single, Married, Divorced, or Widowed."
                         )
-    parser.add_argument("spouse",
+    parser.add_argument("spouse_id",
                         required=True,
-                        help="Enter the name of your spouse."
+                        help="If applicable, enter the id of your spouse. Otherwise, enter 0."
                         )
     parser.add_argument("occupation_type",
                         required=True,
@@ -136,7 +137,7 @@ class MemberListController(Resource):
                         help="Every member must have a household_id."
                         )
     def get(self):
-        return {"data": list(map(lambda x: x.json(), Member.query.all())), "message": None}, 200
+        return {"data": [x.json() for x in Member.query.all()], "message": None}, 200
 
     def post(self):
 
@@ -145,7 +146,7 @@ class MemberListController(Resource):
         if Household.find_by_ids([data["household_id"]])[0] is None:
             return {"data":None, "message": "Household not found."}, 404
 
-        member = Member(data["name"], data["gender"], data["marital_status"], data["spouse"], data["occupation_type"], data["annual_income"], data["dob"], data["household_id"])
+        member = Member(**data)
 
         try:
             member.save_to_db()
@@ -159,4 +160,4 @@ class GrantSearch(Resource):
     def get(self):
         result = GrantQuery.eligible_households(request.args)
         households = Household.find_by_ids(list(set(result)))
-        return {"data":list(map(lambda x: x.json(), households)), "message": None}, 200
+        return {"data":[x.json() for x in households], "message": None}, 200

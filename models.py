@@ -50,29 +50,29 @@ class Member(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(MAX_CHAR))
-    gender = db.Column(db.String(1)) # assume only 2 genders, M and F.
+    gender = db.Column(db.String(1))
     marital_status = db.Column(db.String(MAX_CHAR))
-    spouse = db.Column(db.String(MAX_CHAR))
+    spouse_id = db.Column(db.Integer)
     occupation_type = db.Column(db.String(MAX_CHAR))
     annual_income = db.Column(db.Float(precision=2))
     dob = db.Column(db.String(MAX_CHAR)) # assume DD-MM-YYYY
     household_id = db.Column(db.Integer, db.ForeignKey('households.id'))
 
-    household = db.relationship('Household')
+    households = db.relationship('Household')
 
-    def __init__(self, name, gender, marital_status, spouse, occupation_type, annual_income, dob, household_id):
+    def __init__(self, name, gender, marital_status, spouse_id, occupation_type, annual_income, dob, household_id):
         self.name = name
         self.gender = gender
         self.marital_status = marital_status
-        self.spouse = spouse
+        self.spouse_id = spouse_id
         self.occupation_type = occupation_type
         self.annual_income = annual_income
         self.dob = dob
         self.household_id = household_id
 
     def json(self):
-        return {'member_id':self.id, 'household_id':self.household_id, 'name': self.name, 'gender': self.gender, 'marital_status': self.marital_status, 'spouse': self.spouse, \
-                'occupation type': self.occupation_type, 'annual income': self.annual_income, 'date of birth:': self.dob}
+        return {'member_id':self.id, 'household_id':self.household_id, 'name': self.name, 'gender': self.gender, 'marital_status': self.marital_status, 'spouse_id': self.spouse_id, \
+                'occupation_type': self.occupation_type, 'annual_income': self.annual_income, 'dob:': self.dob}
 
     @classmethod
     def find_by_name(cls, name):
@@ -119,11 +119,11 @@ class GrantQuery():
             try:
                 max_total_income = args["max_total_income"]
             except:
-                max_total_income = 1e20
+                max_total_income = 1e30
             try:
                 max_household_size = args["max_household_size"]
             except:
-                max_household_size = 1e20
+                max_household_size = 1e30
 
             result = db.engine.execute(MANUAL_QUERY.format(housing_type = housing_type, max_total_income = max_total_income, max_household_size = max_household_size))
             return [row[0] for row in result]
