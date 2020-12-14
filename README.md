@@ -6,7 +6,7 @@ This is a RESTful API which allows users to decide which group(s) of households 
 
 ## Installation ##
 
-The API is built using Python and Flask (using Flask-SQLAlchemy as the ORM), and requires the following libraries:
+The API is built using Python and Flask (using Flask-SQLAlchemy as the ORM), and requires the following libraries to be installed:
 
 ```
 pip install Flask
@@ -96,9 +96,9 @@ The list of grant types (and the corresponding query string) available are:
 
 ## Example of API Responses
 #### 1. Getting all households:
-**Method**: ```GET```
-**URL** : ```/households```
-**Response** : ```200 OK```
+**Method**: ```GET```\
+**URL** : ```/households```\
+**Response** : ```200 OK```\
 **Content Example**:
 ```javascript   
 {
@@ -156,14 +156,14 @@ The list of grant types (and the corresponding query string) available are:
 ```
 #### 2. Creating an empty household ("household_id" is automatically assigned):
 
-**Method**: ```POST```
-**URL** : ```/households```
+**Method**: ```POST```\
+**URL** : ```/households```\
 **Body** :
 ```
 "name": "household_1"
 "type": "HDB"
 ```
-**Response** : ```201 CREATED```
+**Response** : ```201 CREATED```\
 **Content Example**:
 ```javascript   
 {
@@ -178,9 +178,9 @@ The list of grant types (and the corresponding query string) available are:
 ```
 #### 3. Getting a household of a specific id:
 
-**Method**: ```GET```
-**URL** : ```/household/<household_id>```
-**Response** : ```200 OK```
+**Method**: ```GET```\
+**URL** : ```/household/<household_id>```\
+**Response** : ```200 OK```\
 **Content Example**:
 ```javascript   
 {
@@ -207,9 +207,9 @@ The list of grant types (and the corresponding query string) available are:
 ```
 #### 4. Deleting a household (all members within the household are also deleted):
 
-**Method**: ```DELETE```
-**URL** : ```/household/<household_id>```
-**Response** : ```200 OK```
+**Method**: ```DELETE```\
+**URL** : ```/household/<household_id>```\
+**Response** : ```200 OK```\
 **Content Example**:
 ```javascript   
 {
@@ -219,8 +219,8 @@ The list of grant types (and the corresponding query string) available are:
 ```
 #### 5. Creating a member within a household ("member_id" is automatically assigned):
 
-**Method**: ```POST```
-**URL** : ```/members```
+**Method**: ```POST```\
+**URL** : ```/members```\
 **Body** :
 ```
 "name" : "James Lee",
@@ -232,7 +232,7 @@ The list of grant types (and the corresponding query string) available are:
 "dob" : "1982-01-01",
 "household_id":1
 ```
-**Response** : ```201 CREATED```
+**Response** : ```201 CREATED```\
 **Content Example**:
 ```javascript
 {
@@ -252,9 +252,9 @@ The list of grant types (and the corresponding query string) available are:
 ```
 #### 6. Getting a member of a specific id:
 
-**Method**: ```GET```
-**URL** : ```/member/<member_id>```
-**Response**: ```200 OK ```
+**Method**: ```GET```\
+**URL** : ```/member/<member_id>```\
+**Response**: ```200 OK ```\
 **Content Example**:
 ```javascript
 {
@@ -274,9 +274,9 @@ The list of grant types (and the corresponding query string) available are:
 ```
 #### 7. Deleting a member of a specific id:
 
-**Method**: ```DELETE```
-**URL** : ```/member/<member_id>```
-**Response**: ```200 OK ```
+**Method**: ```DELETE```\
+**URL** : ```/member/<member_id>```\
+**Response**: ```200 OK ```\
 **Content Example**:
 ```javascript
 {
@@ -286,9 +286,9 @@ The list of grant types (and the corresponding query string) available are:
 ```
 #### 8. Getting households eligible for the Elder Bonus:
 
-**Method**: ```GET```
-**URL** : ```households/grant?grant=ElderBonus```
-**Response**: ```200 OK ```
+**Method**: ```GET```\
+**URL** : ```households/grant?grant=ElderBonus```\
+**Response**: ```200 OK ```\
 **Content Example**:
 ```javascript
 {
@@ -332,9 +332,9 @@ The list of grant types (and the corresponding query string) available are:
 - ```max_total_income``` = 50,000
 - ```max_household_size``` = 2
 
-**Method**: ```GET```
-**URL** : ```households/grant?housing_type=HDB&max_total_income=50000&max_household_size=2&grant=CustomGrant```
-**Response**: ```200 OK ```
+**Method**: ```GET```\
+**URL** : ```households/grant?housing_type=HDB&max_total_income=50000&max_household_size=2&grant=CustomGrant```\
+**Response**: ```200 OK ```\
 **Content Example**:
 ```javascript
 {

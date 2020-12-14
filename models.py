@@ -1,11 +1,14 @@
 from db import db
-from queries import YOLO_GRANT_QUERY, BABY_GRANT_QUERY, ELDER_BONUS_QUERY, STUDENT_BONUS_QUERY, MANUAL_QUERY
+from queries import STUDENT_BONUS_QUERY, FAMILY_SCHEME_QUERY, ELDER_BONUS_QUERY, BABY_GRANT_QUERY, YOLO_GRANT_QUERY, MANUAL_QUERY
 
-YOLO_GRANT = "YOLOGSTGrant"
-BABY_GRANT = "BabySunshineGrant"
-ELDER_BONUS = "ElderBonus"
+
 STUDENT_BONUS = "StudentEncouragementBonus"
+FAMILY_SCHEME = "FamilyTogethernessScheme"
+ELDER_BONUS = "ElderBonus"
+BABY_GRANT = "BabySunshineGrant"
+YOLO_GRANT = "YOLOGSTGrant"
 CUSTOM_GRANT = "CustomGrant"
+
 MAX_CHAR = 80
 
 HOUSEHOLD_CHOICES = ("Landed","Condominium","HDB")
@@ -95,20 +98,24 @@ class GrantQuery():
     @staticmethod
     def eligible_households(args):
 
-        if args["grant"] == YOLO_GRANT:
-            result = db.engine.execute(YOLO_GRANT_QUERY)
+        if args["grant"] == STUDENT_BONUS:
+            result = db.engine.execute(STUDENT_BONUS_QUERY)
             return [row[0] for row in result]
 
-        elif args["grant"] == BABY_GRANT:
-            result = db.engine.execute(BABY_GRANT_QUERY)
+        elif args["grant"] == FAMILY_SCHEME:
+            result = db.engine.execute(FAMILY_SCHEME_QUERY)
             return [row[0] for row in result]
 
         elif args["grant"] == ELDER_BONUS:
             result = db.engine.execute(ELDER_BONUS_QUERY)
             return [row[0] for row in result]
 
-        elif args["grant"] == STUDENT_BONUS:
-            result = db.engine.execute(STUDENT_BONUS_QUERY)
+        elif args["grant"] == BABY_GRANT:
+            result = db.engine.execute(BABY_GRANT_QUERY)
+            return [row[0] for row in result]
+
+        elif args["grant"] == YOLO_GRANT:
+            result = db.engine.execute(YOLO_GRANT_QUERY)
             return [row[0] for row in result]
 
         elif args["grant"] == CUSTOM_GRANT:
