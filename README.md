@@ -88,7 +88,7 @@ The list of grant types (and the corresponding query string) available are:
 - Members cannot exist without a household (i.e. member(s) must be assigned the unique identifier of an existing household at point of creation).
 - Deleting a household will delete all members within that household.
 - The **Student Encouragement Bonus** function assumes that any household with member(s) below 16 years old qualify (in addition to meeting the household annual income criterion), even if there are no "parents" in the household.
-- The **Family Togetherness Scheme** function assumes that the husband and wife within the household are 18 years old and other, and regards any other member(s) within the household that are younger than 18* years old as their "children".
+- The **Family Togetherness Scheme** function assumes that the husband and wife within the household are 18 years old and older, and regards any other member(s) within the household that are younger than 18* years old as their "children".
 - The **Baby Sunshine Grant** function assumes that any household with member(s) below 5 years old qualify, even if there are no "parents" in the household.
 - The **Custom Grant** function assumes that an unapplied filter would mean defaulting to all possible values (e.g. 'HDB', 'Condominium', 'Landed' for ```housing_type```).
 
