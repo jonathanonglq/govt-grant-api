@@ -6,12 +6,18 @@ def benchmark_date(years):
 
 STUDENT_BONUS_QUERY = """
                         SELECT
-                            household_id, SUM(annual_income) AS total_income, dob
-                        FROM members
-                        GROUP BY household_id
-                        HAVING dob > '{}' AND total_income < 150000
-
+                            t1.household_id, t1.total_income, t2.dob
+                        FROM (
+                            SELECT
+                                household_id, SUM(annual_income) AS total_income
+                            FROM members
+                            GROUP BY household_id
+                            ) AS t1
+                        INNER JOIN members t2
+                        ON t1.household_id = t2.household_id
+                        WHERE t2.dob > '{}' AND t1.total_income < 150000
                         """.format(benchmark_date(16))
+
 
 FAMILY_SCHEME_QUERY = """
                         SELECT

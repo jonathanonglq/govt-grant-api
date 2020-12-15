@@ -75,7 +75,7 @@ class Member(db.Model):
 
     def json(self):
         return {'member_id':self.id, 'household_id':self.household_id, 'name': self.name, 'gender': self.gender, 'marital_status': self.marital_status, 'spouse_id': self.spouse_id, \
-                'occupation_type': self.occupation_type, 'annual_income': self.annual_income, 'dob:': self.dob}
+                'occupation_type': self.occupation_type, 'annual_income': self.annual_income, 'doby': self.dob}
 
     @classmethod
     def find_by_name(cls, name):
